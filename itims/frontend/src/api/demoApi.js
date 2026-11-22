@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const demoUser = { id: 1, name: 'Alex Morgan', email: 'admin@itims.demo', role: 'ADMIN', createdAt: '2025-01-10T09:00:00.000Z' };
+const demoUser = { id: 1, name: 'Admin User', email: 'admin@itims.com', role: 'ADMIN', createdAt: '2025-01-10T09:00:00.000Z' };
+const staffUser = { id: 2, name: 'Jamie Patel', email: 'staff@itims.com', role: 'IT_STAFF', createdAt: '2025-02-01T09:00:00.000Z' };
 const data = {
   computers: [
     { id: 1, assetTag: 'AST-PC-001', name: 'PC-HR-01', assignedTo: 'Anita Rao', department: 'HR', location: 'Block A', processor: 'Intel Core i5', ram: '16 GB', storage: '512 GB SSD', os: 'Windows 11', status: 'ACTIVE', purchaseDate: '2024-02-14', ipId: 2, ip: { id: 2, ipAddress: '10.10.20.21', subnet: '10.10.20.0/24', vlan: 'VLAN 20' } },
@@ -127,7 +128,16 @@ function handleRequest(config) {
   const method = (config.method || 'get').toLowerCase();
   const params = { ...Object.fromEntries(url.searchParams), ...(config.params || {}) };
 
-  if (method === 'post' && path === '/auth/login') return ok({ token: 'demo-session', user: clone(demoUser) }, 'Login successful');
+  if (method === 'post' && path === '/auth/login') {
+    let email = 'admin@itims.com';
+    try {
+      const body = typeof config.data === 'string' ? JSON.parse(config.data || '{}') : (config.data || {});
+      if (body.email) email = body.email;
+    } catch {}
+    const isStaff = email.toLowerCase().includes('staff');
+    const user = isStaff ? staffUser : demoUser;
+    return ok({ token: 'demo-session', user: clone(user) }, 'Login successful');
+  }
   if (method === 'get' && path === '/dashboard/stats') return ok(dashboardStats());
   if (method === 'get' && path === '/ips/summary') {
     const summary = { total: data.ips.length };
