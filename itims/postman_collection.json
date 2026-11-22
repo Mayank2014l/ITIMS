@@ -1,0 +1,2366 @@
+{
+  "info": {
+    "name": "ITIMS - IT Infrastructure Management System API",
+    "description": "Run 'Auth > Login (Admin)' first. The token is saved automatically and sent as Bearer token on every request.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@itims.com\",\n  \"password\": \"Admin@123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) { pm.collectionVariables.set('token', res.data.token); }",
+                  "pm.test('Login OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login (IT Staff)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"staff@itims.com\",\n  \"password\": \"Staff@123\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.success) { pm.collectionVariables.set('token', res.data.token); }",
+                  "pm.test('Login OK', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login (wrong password -> 401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@itims.com\",\n  \"password\": \"wrong\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me (current user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "auth",
+                "me"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (ADMIN)",
+      "item": [
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Staff list (for assign dropdown)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/staff",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "staff"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create user",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Test Staff\",\n  \"email\": \"test@itims.com\",\n  \"password\": \"Test@123\",\n  \"role\": \"IT_STAFF\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update user",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/2",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "2"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amit Verma\",\n  \"role\": \"IT_STAFF\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete user",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/5",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "users",
+                "5"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Dashboard stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/dashboard/stats",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "dashboard",
+                "stats"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "IP Addresses",
+      "item": [
+        {
+          "name": "IP summary (Free/Allocated)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips/summary",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips",
+                "summary"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Check IP availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips/check?ip=10.10.10.10&model=ipAddress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips",
+                "check"
+              ],
+              "query": [
+                {
+                  "key": "ip",
+                  "value": "10.10.10.10"
+                },
+                {
+                  "key": "model",
+                  "value": "ipAddress"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "DUPLICATE IP -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ipAddress\": \"10.10.10.10\",\n  \"status\": \"FREE\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Duplicate IP rejected with 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "INVALID IPv4 -> 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ipAddress\": \"10.10.10.300\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter by subnet/VLAN",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips?subnet=10.10.20.0/24&status=FREE",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips"
+              ],
+              "query": [
+                {
+                  "key": "subnet",
+                  "value": "10.10.20.0/24"
+                },
+                {
+                  "key": "status",
+                  "value": "FREE"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List IP Addresses",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get IP Addresses by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create IP Addresses",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ipAddress\": \"10.10.20.50\",\n  \"subnet\": \"10.10.20.0/24\",\n  \"vlan\": \"VLAN 20 - Users\",\n  \"status\": \"FREE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update IP Addresses",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ipAddress\": \"10.10.20.50\",\n  \"subnet\": \"10.10.20.0/24\",\n  \"vlan\": \"VLAN 20 - Users\",\n  \"status\": \"FREE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete IP Addresses (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/ips/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ips",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Computers",
+      "item": [
+        {
+          "name": "List Computers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/computers?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "computers"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Computers by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/computers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "computers",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Computers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/computers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "computers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetTag\": \"AST-PC-099\",\n  \"name\": \"PC-TEST-01\",\n  \"assignedTo\": \"Test User\",\n  \"department\": \"IT\",\n  \"ram\": \"8 GB\",\n  \"status\": \"ACTIVE\",\n  \"purchaseDate\": \"2025-01-15\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Computers",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/computers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "computers",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assetTag\": \"AST-PC-099\",\n  \"name\": \"PC-TEST-01\",\n  \"assignedTo\": \"Test User\",\n  \"department\": \"IT\",\n  \"ram\": \"8 GB\",\n  \"status\": \"ACTIVE\",\n  \"purchaseDate\": \"2025-01-15\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Computers (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/computers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "computers",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hardware",
+      "item": [
+        {
+          "name": "List Hardware",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hardware?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hardware"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Hardware by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hardware/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hardware",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Hardware",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hardware",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hardware"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemType\": \"Printer\",\n  \"brand\": \"HP\",\n  \"model\": \"M404\",\n  \"serialNo\": \"SN-TEST-1\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Hardware",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hardware/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hardware",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"itemType\": \"Printer\",\n  \"brand\": \"HP\",\n  \"model\": \"M404\",\n  \"serialNo\": \"SN-TEST-1\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Hardware (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/hardware/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "hardware",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Network Devices",
+      "item": [
+        {
+          "name": "DUPLICATE IP on device -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Dup-Switch\",\n  \"type\": \"Switch\",\n  \"ipAddress\": \"10.10.10.10\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Duplicate IP rejected with 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Network Devices",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Network Devices by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Network Devices",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Access-Switch-Test\",\n  \"type\": \"Switch\",\n  \"brand\": \"Cisco\",\n  \"ipAddress\": \"10.10.10.20\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Network Devices",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Access-Switch-Test\",\n  \"type\": \"Switch\",\n  \"brand\": \"Cisco\",\n  \"ipAddress\": \"10.10.10.20\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Network Devices (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/network-devices/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "network-devices",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Switch Ports",
+      "item": [
+        {
+          "name": "List Switch Ports",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/switches?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "switches"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Switch Ports by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/switches/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "switches",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Switch Ports",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/switches",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "switches"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"networkDeviceId\": 2,\n  \"totalPorts\": 48,\n  \"portNumber\": 20,\n  \"connectedDevice\": \"PC-TEST-01\",\n  \"vlan\": \"VLAN 20\",\n  \"portStatus\": \"UP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Switch Ports",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/switches/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "switches",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"networkDeviceId\": 2,\n  \"totalPorts\": 48,\n  \"portNumber\": 20,\n  \"connectedDevice\": \"PC-TEST-01\",\n  \"vlan\": \"VLAN 20\",\n  \"portStatus\": \"UP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Switch Ports (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/switches/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "switches",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ISPs",
+      "item": [
+        {
+          "name": "List ISPs",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/isps?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "isps"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get ISPs by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/isps/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "isps",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create ISPs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/isps",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "isps"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerName\": \"BSNL\",\n  \"linkType\": \"BACKUP\",\n  \"bandwidth\": \"50 Mbps\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update ISPs",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/isps/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "isps",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerName\": \"BSNL\",\n  \"linkType\": \"BACKUP\",\n  \"bandwidth\": \"50 Mbps\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete ISPs (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/isps/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "isps",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Firewalls",
+      "item": [
+        {
+          "name": "List Firewalls",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/firewalls?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "firewalls"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Firewalls by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/firewalls/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "firewalls",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Firewalls",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/firewalls",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "firewalls"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"FW-Test\",\n  \"brand\": \"Fortinet\",\n  \"ipAddress\": \"10.10.10.252\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Firewalls",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/firewalls/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "firewalls",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"FW-Test\",\n  \"brand\": \"Fortinet\",\n  \"ipAddress\": \"10.10.10.252\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Firewalls (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/firewalls/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "firewalls",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Access Points",
+      "item": [
+        {
+          "name": "DUPLICATE IP on AP -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AP-Dup\",\n  \"ipAddress\": \"10.10.10.10\"\n}"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Duplicate IP rejected with 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List Access Points",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Access Points by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Access Points",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AP-Test\",\n  \"location\": \"Lab\",\n  \"ipAddress\": \"10.10.30.29\",\n  \"ssid\": \"ORG-Staff\",\n  \"status\": \"ONLINE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Access Points",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"AP-Test\",\n  \"location\": \"Lab\",\n  \"ipAddress\": \"10.10.30.29\",\n  \"ssid\": \"ORG-Staff\",\n  \"status\": \"ONLINE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Access Points (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/access-points/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "access-points",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Servers",
+      "item": [
+        {
+          "name": "List Servers",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servers?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servers"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Servers by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servers",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Servers",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servers"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SRV-TEST\",\n  \"role\": \"Test\",\n  \"ipAddress\": \"10.10.10.20\",\n  \"rackNumber\": \"Rack-C\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Servers",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servers",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SRV-TEST\",\n  \"role\": \"Test\",\n  \"ipAddress\": \"10.10.10.20\",\n  \"rackNumber\": \"Rack-C\",\n  \"status\": \"ACTIVE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Servers (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/servers/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servers",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "CCTV",
+      "item": [
+        {
+          "name": "List CCTV",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cctv?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cctv"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get CCTV by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cctv/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cctv",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create CCTV",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cctv",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cctv"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cameraName\": \"Cam-Test\",\n  \"cameraType\": \"IP\",\n  \"recorderType\": \"NVR\",\n  \"ipAddress\": \"10.10.40.17\",\n  \"status\": \"WORKING\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update CCTV",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cctv/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cctv",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cameraName\": \"Cam-Test\",\n  \"cameraType\": \"IP\",\n  \"recorderType\": \"NVR\",\n  \"ipAddress\": \"10.10.40.17\",\n  \"status\": \"WORKING\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete CCTV (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/cctv/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cctv",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Complaints",
+      "item": [
+        {
+          "name": "Assign complaint",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/7/assign",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "7",
+                "assign"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"assignedToId\": 2,\n  \"priority\": \"HIGH\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Status -> IN_PROGRESS",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/7/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "7",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Status -> RESOLVED (needs note)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/7/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "7",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\",\n  \"resolutionNote\": \"Access granted in SAP\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Status -> CLOSED",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/7/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "7",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CLOSED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Invalid step (OPEN -> CLOSED) -> 400",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/9/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "9",
+                "status"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"CLOSED\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Filter complaints",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints?status=OPEN&priority=CRITICAL",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "OPEN"
+                },
+                {
+                  "key": "priority",
+                  "value": "CRITICAL"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Complaints",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Complaints by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Complaints",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mouse not working\",\n  \"category\": \"Hardware\",\n  \"priority\": \"LOW\",\n  \"raisedBy\": \"Test User\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Complaints",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Mouse not working\",\n  \"category\": \"Hardware\",\n  \"priority\": \"LOW\",\n  \"raisedBy\": \"Test User\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Complaints (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/complaints/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "complaints",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Maintenance / Downtime / Incidents",
+      "item": [
+        {
+          "name": "ISP downtime records",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance?recordType=ISP_DOWNTIME",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance"
+              ],
+              "query": [
+                {
+                  "key": "recordType",
+                  "value": "ISP_DOWNTIME"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Security incidents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance?recordType=SECURITY_INCIDENT",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance"
+              ],
+              "query": [
+                {
+                  "key": "recordType",
+                  "value": "SECURITY_INCIDENT"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "List Maintenance / Downtime / Incidents",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance?search=&page=1&limit=10",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Maintenance / Downtime / Incidents by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance",
+                "1"
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Maintenance / Downtime / Incidents",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceType\": \"Server\",\n  \"deviceName\": \"SRV-DC01\",\n  \"recordType\": \"MAINTENANCE\",\n  \"description\": \"Patching\",\n  \"date\": \"2026-11-20\",\n  \"performedBy\": \"Amit Verma\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Maintenance / Downtime / Incidents",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance",
+                "1"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceType\": \"Server\",\n  \"deviceName\": \"SRV-DC01\",\n  \"recordType\": \"MAINTENANCE\",\n  \"description\": \"Patching\",\n  \"date\": \"2026-11-20\",\n  \"performedBy\": \"Amit Verma\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete Maintenance / Downtime / Incidents (ADMIN only)",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/maintenance/1",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "maintenance",
+                "1"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

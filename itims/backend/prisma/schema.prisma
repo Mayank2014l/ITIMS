@@ -1,0 +1,263 @@
+// =============================================================
+// ITIMS - Prisma Schema (exactly 13 tables)
+// Prisma reads this file and creates the PostgreSQL tables.
+// =============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- ENUMS (fixed list of allowed values) ----------
+enum Role {
+  ADMIN
+  IT_STAFF
+}
+
+enum ComputerStatus {
+  ACTIVE
+  INACTIVE
+  UNDER_REPAIR
+}
+
+enum IpStatus {
+  ALLOCATED
+  FREE
+  RESERVED
+}
+
+enum PortStatus {
+  UP
+  DOWN
+}
+
+enum LinkType {
+  PRIMARY
+  BACKUP
+}
+
+enum IspStatus {
+  ACTIVE
+  DOWN
+}
+
+enum ApStatus {
+  ONLINE
+  OFFLINE
+}
+
+enum CameraType {
+  ANALOG
+  IP
+}
+
+enum RecorderType {
+  DVR
+  NVR
+}
+
+enum CctvStatus {
+  WORKING
+  NOT_WORKING
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum ComplaintStatus {
+  OPEN
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum RecordType {
+  MAINTENANCE
+  ISP_DOWNTIME
+  SECURITY_INCIDENT
+}
+
+// ---------- 1. USER ----------
+model User {
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique
+  password   String // bcrypt hash, never plain text
+  role       Role        @default(IT_STAFF)
+  createdAt  DateTime    @default(now())
+  complaints Complaint[] @relation("AssignedComplaints")
+}
+
+// ---------- 2. COMPUTER ----------
+model Computer {
+  id           Int            @id @default(autoincrement())
+  assetTag     String         @unique
+  name         String
+  assignedTo   String?
+  department   String?
+  location     String?
+  processor    String?
+  ram          String?
+  storage      String?
+  os           String?
+  macAddress   String?
+  ipId         Int?
+  ip           IpAddress?     @relation(fields: [ipId], references: [id], onDelete: SetNull)
+  status       ComputerStatus @default(ACTIVE)
+  purchaseDate DateTime?
+}
+
+// ---------- 3. HARDWARE INVENTORY ----------
+model HardwareInventory {
+  id           Int       @id @default(autoincrement())
+  itemType     String // Printer / Scanner / UPS / Monitor / Other
+  brand        String?
+  model        String?
+  serialNo     String?
+  location     String?
+  status       String    @default("ACTIVE")
+  purchaseDate DateTime?
+  warrantyEnd  DateTime?
+}
+
+// ---------- 4. IP ADDRESS ----------
+model IpAddress {
+  id           Int        @id @default(autoincrement())
+  ipAddress    String     @unique // UNIQUE = database-level duplicate protection
+  subnet       String?
+  vlan         String?
+  deviceType   String?
+  deviceName   String?
+  assignedDate DateTime?
+  status       IpStatus   @default(FREE)
+  remarks      String?
+  computers    Computer[]
+}
+
+// ---------- 5. NETWORK DEVICE ----------
+model NetworkDevice {
+  id        Int      @id @default(autoincrement())
+  name      String
+  type      String // Router / Switch / Modem / Other
+  brand     String?
+  model     String?
+  location  String?
+  ipAddress String?
+  status    String   @default("ACTIVE")
+  switches  Switch[]
+}
+
+// ---------- 6. SWITCH (port details) ----------
+model Switch {
+  id              Int           @id @default(autoincrement())
+  networkDeviceId Int
+  networkDevice   NetworkDevice @relation(fields: [networkDeviceId], references: [id], onDelete: Cascade)
+  totalPorts      Int           @default(24)
+  portNumber      Int
+  connectedDevice String?
+  vlan            String?
+  portStatus      PortStatus    @default(UP)
+}
+
+// ---------- 7. ISP ----------
+model Isp {
+  id            Int       @id @default(autoincrement())
+  providerName  String
+  linkType      LinkType  @default(PRIMARY)
+  bandwidth     String?
+  circuitId     String?
+  staticIp      String?
+  contactPerson String?
+  contactNumber String?
+  status        IspStatus @default(ACTIVE)
+}
+
+// ---------- 8. FIREWALL ----------
+model Firewall {
+  id              Int       @id @default(autoincrement())
+  name            String
+  brand           String?
+  model           String?
+  ipAddress       String?
+  firmwareVersion String?
+  policiesSummary String?
+  licenseExpiry   DateTime?
+  status          String    @default("ACTIVE")
+}
+
+// ---------- 9. ACCESS POINT ----------
+model AccessPoint {
+  id         Int      @id @default(autoincrement())
+  name       String
+  location   String?
+  ipAddress  String?
+  macAddress String?
+  ssid       String?
+  status     ApStatus @default(ONLINE)
+}
+
+// ---------- 10. SERVER ----------
+model Server {
+  id         Int     @id @default(autoincrement())
+  name       String
+  role       String?
+  brand      String?
+  os         String?
+  ipAddress  String?
+  rackNumber String?
+  patchPanel String?
+  location   String?
+  status     String  @default("ACTIVE")
+}
+
+// ---------- 11. CCTV CAMERA ----------
+model CctvCamera {
+  id           Int          @id @default(autoincrement())
+  cameraName   String
+  cameraType   CameraType   @default(IP)
+  location     String?
+  recorderType RecorderType @default(NVR)
+  recorderName String?
+  ipAddress    String?
+  status       CctvStatus   @default(WORKING)
+}
+
+// ---------- 12. COMPLAINT ----------
+model Complaint {
+  id             Int             @id @default(autoincrement())
+  ticketNo       String          @unique // auto generated: TKT-0001
+  title          String
+  description    String?
+  category       String // Hardware / Network / Software / CCTV / ISP / Other
+  priority       Priority        @default(MEDIUM)
+  status         ComplaintStatus @default(OPEN)
+  raisedBy       String
+  assignedToId   Int?
+  assignedTo     User?           @relation("AssignedComplaints", fields: [assignedToId], references: [id], onDelete: SetNull)
+  resolutionNote String?
+  createdAt      DateTime        @default(now())
+  resolvedAt     DateTime?
+  closedAt       DateTime?
+}
+
+// ---------- 13. MAINTENANCE RECORD ----------
+// Also stores ISP downtime and firewall security incidents (via recordType)
+model MaintenanceRecord {
+  id          Int        @id @default(autoincrement())
+  deviceType  String
+  deviceName  String
+  recordType  RecordType @default(MAINTENANCE)
+  description String?
+  date        DateTime   @default(now())
+  performedBy String?
+  remarks     String?
+}
